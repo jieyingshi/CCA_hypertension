@@ -6,12 +6,12 @@ load_packages <- function(packages) {
   invisible(lapply(packages, library, character.only = TRUE))
 }
 
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/ACEi_1.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/beta_1.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/CCB_1.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/diuretic_1.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/B.RData")
-load("data_list_imp.Rdata")
+load("~/data/ACEi_1.RData")
+load("~/data/beta_1.RData")
+load("~/data/CCB_1.RData")
+load("~/data/diuretic_1.RData")
+load("~/data/B.RData")
+load("~/data_list_imp.Rdata")
 
 
 # 缺失值处理 ----
@@ -296,7 +296,6 @@ for (resp in responses) {
   
   res_list <- list()
   
-  # 单线程 bootstrap
   for (b in todo_b) {
     set.seed(123 + b * 1000)
     id <- sample(nrow(df_sub), size = floor(frac * nrow(df_sub)), replace = FALSE)

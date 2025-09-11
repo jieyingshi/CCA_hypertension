@@ -25,11 +25,11 @@ load_packages(my_packages)
 
 
 # data_clean -----
-baseline <- fread("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/基线.csv", header = TRUE, encoding = "UTF-8")
+baseline <- fread("~/data/基线.csv", header = TRUE, encoding = "UTF-8")
 print(dim(baseline)) #[1] 640418   216
 length(unique(baseline$patient_uid)) #[1] 640418
 
-baseline_drug <- fread("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/基线用药.csv", header = TRUE, encoding = "UTF-8")
+baseline_drug <- fread("~/data/基线用药.csv", header = TRUE, encoding = "UTF-8")
 print(dim(baseline_drug)) 
 #[1] 2629971      13
 
@@ -53,13 +53,13 @@ length(unique(baseline_drug$patient_uid))
 #[1] 637988
 summary(as.factor(baseline_drug$H0182))
 
-baseline_his_drug <- fread("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/基线病史用药.csv", header = TRUE, encoding = "UTF-8")
+baseline_his_drug <- fread("~/data/基线病史用药.csv", header = TRUE, encoding = "UTF-8")
 print(dim(baseline_his_drug)) 
 #[1] 682680      8
 print(names(baseline_his_drug))
 #高血压用药史
 
-follow <- fread("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/随访.csv", header = TRUE, encoding = "UTF-8")
+follow <- fread("~/data/随访.csv", header = TRUE, encoding = "UTF-8")
 print(dim(follow)) 
 # [1] 4577024     105
 print(names(follow))
@@ -75,7 +75,7 @@ length(unique(follow$followup_id))
 # [1] 4577024
 length(subset(follow,follow$patient_uid=="d5e32731-477a-238a-0c2f-9f993190e6f7")$followup_id)
 
-follow_drug <- fread("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/随访用药.csv", header = TRUE, encoding = "UTF-8")
+follow_drug <- fread("~/data/随访用药.csv", header = TRUE, encoding = "UTF-8")
 print(dim(follow_drug)) 
 # [1] 18807899       14
 print(names(follow_drug))
@@ -185,10 +185,10 @@ nomo_data <- nomo[long_segments, on = .(patient_uid, rleid_drug), nomatch = 0]
 nrow(nomo_data) #1317004
 length(unique(nomo_data$patient_uid))  #138568
 
-save(nomo_data, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/nomo_data.RData")
+save(nomo_data, file = "data/nomo_data.RData")
 
 # sbp ttr -----
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/nomo_data.RData")
+load("data/nomo_data.RData")
 
 A <- B <- C <- D <- α <- data.frame()
 for (i in unique(nomo_data$drug)) {
@@ -321,17 +321,17 @@ ACEi <- ACEi %>%
     drug_time = as.numeric(drug_time)         
   )
 
-save(ACEi, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/ACEi.RData")
-save(beta, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/beta.RData")
-save(CCB, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/CCB.RData")
-save(diuretic, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/diuretic.RData")
+save(ACEi, file = "data/ACEi.RData")
+save(beta, file = "data/beta.RData")
+save(CCB, file = "data/CCB.RData")
+save(diuretic, file = "data/diuretic.RData")
 
 
 # 合并基线特征 ----
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/ACEi.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/beta.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/CCB.RData")
-load("T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/diuretic.RData")
+load("data/ACEi.RData")
+load("data/beta.RData")
+load("data/CCB.RData")
+load("data/diuretic.RData")
 uids <- c(ACEi$patient_uid, CCB$patient_uid, beta$patient_uid,diuretic$patient_uid) #138479
 
 B <- baseline %>% 
@@ -616,10 +616,10 @@ B <- baseline %>%
                 b_K, b_Na, hcy, ua, hua,
                 tc, ldlc, hdlc, tg, anti_chol, dyslipidemia)
 nrow(B)
-save(B, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/B.RData")
+save(B, file = "data/B.RData")
 
 
-load( "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/B.RData")
+load( "data/B.RData")
 
 ACEi_1 <- left_join(ACEi,B,by="patient_uid")
 beta_1 <- left_join(beta,B,by="patient_uid")
@@ -627,7 +627,7 @@ CCB_1 <- left_join(CCB,B,by="patient_uid")
 diuretic_1 <- left_join(diuretic,B,by="patient_uid")
 
 
-save(ACEi_1, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/ACEi_1.RData")
-save(beta_1, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/beta_1.RData")
-save(CCB_1, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/CCB_1.RData")
-save(diuretic_1, file = "T:/研究者项目数据上传/张毅 降压药物疗效差异与人群特征相关性研究 202310/高血压科研库(截至2023年底)/data/diuretic_1.RData")
+save(ACEi_1, file = "data/ACEi_1.RData")
+save(beta_1, file = "data/beta_1.RData")
+save(CCB_1, file = "data/CCB_1.RData")
+save(diuretic_1, file = "data/diuretic_1.RData")

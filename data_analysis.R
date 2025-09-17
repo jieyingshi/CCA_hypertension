@@ -10,7 +10,7 @@ library(VIM)
 library(mice)
 pdf("缺失值.pdf", width = 22, height = 14)  
 aggr(total[,c("sex","age","dwell","ethnicity","work","marriage","education","alco",
-              "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+              "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
               "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
               "bmi","waist","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk","b_K",
               "b_Na","hcy","ua","dyslipidemia","drug_time")],
@@ -23,7 +23,7 @@ aggr(total[,c("sex","age","dwell","ethnicity","work","marriage","education","alc
      prop = T,
      only.miss=F,
      labels=c("sex","age","dwell","ethnicity","work","marriage","education","alco",
-              "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+              "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
               "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
               "bmi","waist","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk","b_K",
               "b_Na","hcy","ua","dyslipidemia","drug_time"), 
@@ -33,7 +33,7 @@ dev.off()
 ### 1.1 列 ----
 pMiss <- function(x){round(sum(is.na(x))/length(x),3)}
 cols_to_delete <- which(apply(total[,c("sex","age","dwell","ethnicity","work","marriage","education","alco",
-                                       "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+                                       "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
                                        "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
                                        "bmi","waist","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk","b_K",
                                        "b_Na","hcy","ua","dyslipidemia","drug_time")], 2, pMiss) > 0.2);cols_to_delete
@@ -41,7 +41,7 @@ cols_to_delete <- which(apply(total[,c("sex","age","dwell","ethnicity","work","m
 ### 1.2 行 ----
 total <- total[, !(colnames(total) %in% cols_to_delete)]
 rows_to_delete <- which(apply(total[,c("sex","age","ethnicity","work","marriage","education","alco",
-                                       "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+                                       "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
                                        "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
                                        "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk",
                                        "ua","dyslipidemia","drug_time")], 1, pMiss) > 0.2);length(rows_to_delete)
@@ -67,7 +67,7 @@ data_list <- list(
 )
 
 predictors <- c(c("sex","age","ethnicity","work","marriage","education","alco",
-                  "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
+                  "smk","sport","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
                   "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
                   "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk",
                   "ua","dyslipidemia","drug_time"))
@@ -132,7 +132,7 @@ data_list_imp <- lapply(data_list_imp, function(df) {
 
 responses <- c("sbpTTR1", "SBPload1", "meanSBP","sbp_control_bad")
 predictors <- c(c("sex","age","ethnicity","work","marriage","education","alco",
-                  "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
+                  "smk","sport","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
                   "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
                   "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk",
                   "ua","dyslipidemia","drug_time"))
@@ -231,10 +231,14 @@ for(d in unique(final_results$Drug)) {
 saveWorkbook(wb, "final_results_by_drug.xlsx", overwrite = TRUE)
 
 ## 3. 共线性 ----
+install.packages("C:/Users/zhangy/Downloads/zip_2.3.3.zip", 
+                 repos = NULL, 
+                 type = "win.binary")
+
 library(corrplot)
 total <- bind_rows(data_list_imp$ACEi, data_list_imp$beta, data_list_imp$CCB, data_list_imp$diuretic);nrow(total) #138184
 predictors <- c(c("sex","age","ethnicity","work","marriage","education","alco",
-                  "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
+                  "smk","sport","dNa","mental","Fhis_hype","hype_duration_5","hype_duration_10",
                   "dbp_arv","dbp_sd","dbp_cv","sbp_arv","sbp_sd","sbp_cv",
                   "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk",
                   "ua","dyslipidemia","drug_time"))
@@ -254,7 +258,7 @@ dev.off()
 library(car)
 responses <- c("sbpTTR1", "SBPload1", "meanSBP","sbp_control_bad")
 predictors <- c(c("sex","age","ethnicity","work","marriage","education","alco",
-                  "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+                  "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
                   "dbp_arv","sbp_arv",
                   "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi",
                   "ua","dyslipidemia","drug_time"))
@@ -321,10 +325,10 @@ for(drug in names(vif_split)){
 saveWorkbook(wb, "VIF_by_drug.xlsx", overwrite = TRUE)
 
 
-# boruta - RF ----
+# boruta  ----
 library(Boruta)
 predictors <- c(c("sex","age","ethnicity","work","marriage","education","alco",
-                  "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
+                  "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
                   "dbp_arv","sbp_arv",
                   "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi",
                   "ua","dyslipidemia","drug_time"))
@@ -363,23 +367,474 @@ for(df_name in names(data_list_imp)){
 }
 save(boruta_results,file = "boruta.Rdata")
 
-# SIVS (lasso+glmnet) ----
+# grid search + XGBoost ----
+library(xgboost)
+library(dplyr)
+library(Ckmeans.1d.dp)
+library(Matrix)
+library(caret)
+
+myCl <- makeCluster(detectCores() - 1)
+registerDoParallel(myCl)
+
+predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
+                "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
+                "dbp_arv","sbp_arv","bmi","HR","AF","cvd","hf",
+                "stroke_w_o_TIA","DM","ckdepi","ua","dyslipidemia","drug_time")
+
+xgb.grid <- expand.grid(
+  nrounds = c(25, 50, 100),
+  eta = c(0.01, 0.05),
+  max_depth = 3,
+  gamma = 0,
+  subsample = c(0.7, 0.8, 0.9),
+  min_child_weight = c(1, 2),
+  colsample_bytree = 1
+)
+
+xgb.control <- trainControl(
+  method = "cv",
+  number = 5,
+  verboseIter = TRUE,
+  returnData = FALSE,
+  returnResamp = "none",
+  classProbs = TRUE,
+  allowParallel = TRUE
+)
+
+best_params_list <- list()
+
+for(name in names(data_list_imp)){ 
+  cat("Processing:", name, "\n") 
+  df <- data_list_imp[[name]] 
+  y_train <- factor(df$sbp_control_bad, levels = c(0,1), labels = c("class0", "class1")) 
+  X_train <- df[, predictors] 
+  X_train_mat <- model.matrix(~ . -1, data = X_train) 
+  
+  # Grid search + CV 
+  xgb.train.model <- train( 
+    x = X_train_mat, 
+    y = y_train, 
+    method = "xgbTree", 
+    trControl = xgb.control, 
+    tuneGrid = xgb.grid) 
+  best_params <- xgb.train.model$bestTune 
+  dtrain <- xgb.DMatrix(data = X_train_mat, label = as.numeric(y_train) - 1)
+  
+  params <- list(
+    eta = best_params$eta,
+    max_depth = best_params$max_depth,
+    gamma = best_params$gamma,
+    min_child_weight = best_params$min_child_weight,
+    subsample = best_params$subsample,
+    colsample_bytree = best_params$colsample_bytree,
+    objective = "binary:logistic",
+    eval_metric = "auc",
+    nthread = detectCores() - 1
+  )
+  
+  xgb.cv.model <- xgb.cv(
+    params = params,
+    data = dtrain,
+    nrounds = 5000,
+    nfold = 5,
+    showsd = TRUE,
+    metrics = "auc",
+    stratified = TRUE,
+    verbose = TRUE,
+    print_every_n = 10L,
+    early_stopping_rounds = 100
+  )
+  
+  best_nrounds <- xgb.cv.model$best_iteration
+  cat("Best nrounds for", name, ":", best_nrounds, "\n")
+  best_params_list[[name]] <- list(
+    bestTune = best_params,
+    best_nrounds = best_nrounds
+  )
+  
+  
+  final_model <- xgboost(
+    data = X_train_mat,
+    label = as.numeric(y_train) - 1,
+    max.depth = best_params$max_depth,
+    eta = best_params$eta,
+    nrounds = best_nrounds,
+    gamma = best_params$gamma,
+    min_child_weight = best_params$min_child_weight,
+    subsample = best_params$subsample,
+    colsample_bytree = best_params$colsample_bytree,
+    objective = "binary:logistic",
+    eval_metric = "auc",
+    verbose = 0,
+    nthread = detectCores() - 1
+  )
+  
+  importance_matrix <- xgb.importance(feature_names = colnames(X_train_mat), model = final_model)
+  
+  importance_matrix$OriginalFeature <- sapply(importance_matrix$Feature, function(x) {
+    matched <- predictors[sapply(predictors, function(p) grepl(p, x))]
+    if(length(matched) > 0) matched[1] else x
+  })
+  
+  importance_summary <- importance_matrix %>%
+    group_by(OriginalFeature) %>%
+    summarise(TotalGain = sum(Gain)) %>%
+    arrange(desc(TotalGain))
+  
+  write.csv(importance_summary, file = paste0("XGB_importance_", name, ".csv"), row.names = FALSE)
+  write.csv(importance_matrix, file = paste0("XGB_importance_c_", name, ".csv"), row.names = FALSE)
+  
+  pdf(file = paste0("XGB_importance_", name, ".pdf"), width = 10, height = 8)
+  importance_plot <- importance_matrix[order(-importance_matrix$Gain), ]
+  xgb.plot.importance(importance_plot, rel_to_first = TRUE, xlab = "Relative Gain",
+                      main = paste("XGBoost Feature Importance -", name))
+  dev.off()
+}
+
+stopCluster(myCl)
+saveRDS(best_params_list, file = "best_params_list.rds")
+
+# xgb_params <- list(
+#   booster = "gbtree",
+#   eta = 0.05,
+#   max_depth = 4,
+#   gamma = 4,
+#   subsample = 0.75,
+#   colsample_bytree = 0.75,
+#   objective = "binary:logistic",
+#   eval_metric = "logloss"
+# )
+# 
+# # 循环data_list_imp
+# for(name in names(data_list_imp)){
+#   df <- data_list_imp[[name]]
+#   y_train <- df$sbp_control_bad
+#   X_train <- df[, predictors]
+#   # one-hot 编码
+#   X_train_mat <- model.matrix(~ . -1, data = X_train)
+#   
+#   xgb_train <- xgb.DMatrix(data = X_train_mat, label = y_train)
+#   xgb_model <- xgb.train(
+#     params = xgb_params,
+#     data = xgb_train,
+#     nrounds = 1000,
+#     verbose = 0
+#   )
+#   
+#   # 特征重要性
+#   importance_matrix <- xgb.importance(feature_names = colnames(X_train_mat), model = xgb_model)
+#   importance_matrix$OriginalFeature <- sapply(importance_matrix$Feature, function(x) {
+#     matched <- predictors[sapply(predictors, function(p) grepl(p, x))]
+#     if(length(matched) > 0) matched[1] else x
+#   })
+#   
+#   importance_summary <- importance_matrix %>%
+#     group_by(OriginalFeature) %>%
+#     summarise(TotalGain = sum(Gain)) %>%
+#     arrange(desc(TotalGain))
+#   
+#     write.csv(importance_summary, file = paste0("XGB_importance_", name, ".csv"), row.names = FALSE)
+#   
+#   pdf(file = paste0("XGB_importance_", name, ".pdf"), width = 10, height = 8)
+#   importance_plot <- importance_matrix[order(-importance_matrix$Gain), ]
+#   xgb.plot.importance(importance_plot, rel_to_first = TRUE, xlab = "Relative Gain",
+#                       main = paste("XGBoost Feature Importance -", name))
+#   dev.off()
+# }
+
+
+# LightGBM ----
+library(lightgbm)
+library(dplyr)
+library(Matrix)   
+library(Ckmeans.1d.dp)  
+library(ggplot2)
+
+predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
+                "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
+                "dbp_arv","sbp_arv","bmi","HR","AF","cvd","hf","stroke_w_o_TIA",
+                "DM","ckdepi","ua","dyslipidemia","drug_time")
+
+lgb_params <- list(
+  objective = "binary",
+  metric = "binary_logloss",
+  boosting = "gbdt",
+  learning_rate = 0.05,
+  num_leaves = 20,
+  max_depth = 4,
+  feature_fraction = 0.75,
+  bagging_fraction = 0.75,
+  bagging_freq = 1,
+  min_data_in_leaf = 15,
+  nthread = 8
+)
+
+for(name in names(data_list_imp)){
+  df <- data_list_imp[[name]]
+  y_train <- df$sbp_control_bad
+  X_train <- df[, predictors]
+  
+  # one-hot 编码
+  X_train_mat <- model.matrix(~ . -1, data = X_train)
+  
+  dtrain <- lgb.Dataset(data = X_train_mat, label = y_train)
+  
+  lgb_model <- lgb.train(
+    params = lgb_params,
+    data = dtrain,
+    nrounds = 1000,
+    verbose = 0,
+  )
+  
+  importance_df <- lgb.importance(lgb_model)
+  
+  importance_df$OriginalFeature <- sapply(importance_df$Feature, function(x) {
+    matched <- predictors[sapply(predictors, function(p) grepl(p, x))]
+    if(length(matched) > 0) matched[1] else x
+  })
+  
+  importance_summary <- importance_df %>%
+    group_by(OriginalFeature) %>%
+    summarise(TotalGain = sum(Gain)) %>%
+    arrange(desc(TotalGain))
+  write.csv(importance_summary, file = paste0("LGB_importance_", name, ".csv"), row.names = FALSE)
+  
+  pdf(file = paste0("LGB_importance_", name, ".pdf"), width = 10, height = 8)
+  lgb.importance(lgb_model) %>% lgb.plot.importance(top_n = 30)
+  title(main = paste("             LightGBM                                    -", name))
+  dev.off()
+}
+
+# multi logistic ----
+library(broom)
+library(dplyr)
+
+for(drug_name in names(data_list_imp)) {
+  
+  df <- data_list_imp[[drug_name]]
+  formula_str <- paste("sbp_control_bad ~", paste(predictors, collapse = " + "))
+  model_std <- glm(as.formula(formula_str), data = df, family = binomial)
+  
+  res_std <- broom::tidy(model_std) %>%
+    mutate(x = statistic^2) %>%
+    filter(term != "(Intercept)")
+  res_std$var_base <- sapply(res_std$term, function(t) {
+    matched <- predictors[sapply(predictors, function(p) grepl(p, t))]
+    if(length(matched) > 0) matched[1] else t
+  })
+  
+  importance_summary <- res_std %>%
+    group_by(var_base) %>%
+    summarise(TotalImportance = sum(x, na.rm = TRUE)) %>%
+    arrange(desc(TotalImportance))
+  
+  write.csv(importance_summary, file = paste0("logi_", drug_name, ".csv"), row.names = FALSE)
+  
+}
+
+
+
+# XGBoost - RFE ----
+library(xgboost)
+library(parallel)
+library(doParallel)
+
+myCl <- makeCluster(detectCores() - 1)
+registerDoParallel(myCl)
+set.seed(123)
+
+predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
+                "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
+                "dbp_arv","sbp_arv","bmi","HR","AF","cvd","hf",
+                "stroke_w_o_TIA","DM","ckdepi","ua","dyslipidemia","drug_time")
+best_params_list <- readRDS("best_params_list.rds")
+
+rfe_results <- list()
+for(drug_name in names(data_list_imp)){
+  cat("Running RFE for:", drug_name, "\n")
+  
+  df <- data_list_imp[[drug_name]]
+  y_train <- df$sbp_control_bad
+  X_train <- df[, predictors]
+  X_train_mat <- model.matrix(~ . -1, data = X_train)
+  
+  bestTune <- best_params_list[[drug_name]]$bestTune
+  best_nrounds <- best_params_list[[drug_name]]$best_nrounds
+  
+  remaining_features <- colnames(X_train_mat)
+  auc_history <- c()
+  removed_order <- c()
+  
+  repeat {
+    # DMatrix
+    dtrain <- xgb.DMatrix(data = X_train_mat[, remaining_features, drop = FALSE],
+                          label = y_train)
+    cv <- xgb.cv(
+      params = list(
+        eta = bestTune$eta,
+        max_depth = bestTune$max_depth,
+        gamma = bestTune$gamma,
+        min_child_weight = bestTune$min_child_weight,
+        subsample = bestTune$subsample,
+        colsample_bytree = bestTune$colsample_bytree,
+        objective = "binary:logistic",
+        eval_metric = "auc",
+        nthread = detectCores() - 1
+      ),
+      data = dtrain,
+      nrounds = best_nrounds,
+      nfold = 10,
+      stratified = TRUE,
+      verbose = 0,
+      early_stopping_rounds = 50
+    )
+    
+    auc_history <- c(auc_history, max(cv$evaluation_log$test_auc_mean))
+    
+    model <- xgboost(
+      data = dtrain,
+      max.depth = bestTune$max_depth,
+      eta = bestTune$eta,
+      nrounds = best_nrounds,
+      gamma = bestTune$gamma,
+      min_child_weight = bestTune$min_child_weight,
+      subsample = bestTune$subsample,
+      colsample_bytree = bestTune$colsample_bytree,
+      objective = "binary:logistic",
+      eval_metric = "auc",
+      verbose = 0,
+      nthread = detectCores() - 1
+    )
+    
+    importance_matrix <- xgb.importance(feature_names = remaining_features, model = model)
+    min_gain_feat <- importance_matrix$Feature[which.min(importance_matrix$Gain)]
+    
+    if(length(remaining_features) <= 2) break
+    remaining_features <- setdiff(remaining_features, min_gain_feat)
+    removed_order <- c(removed_order, min_gain_feat)
+    
+    cat("Removed:", min_gain_feat, "Remaining features:", length(remaining_features),
+        "Current CV AUC:", round(tail(auc_history,1),4), "\n")
+  }
+  removed_order <- c(removed_order, remaining_features)
+  
+  rfe_results[[drug_name]] <- list(
+    final_features = remaining_features,
+    auc_history = auc_history,
+    removed_order = removed_order
+  )
+}
+
+stopCluster(myCl)
+saveRDS(rfe_results, file = "xgb_rfe_results_dynamicTune.rds")
+
+## RFE+XGB 绘图 ----
+library(xgboost)
+library(dplyr)
+library(Ckmeans.1d.dp)
+drug_names <- c("ACEi", "beta", "CCB", "diuretic")
+
+importance_summary_list <- list()
+
+for(drug in drug_names){
+  imp_df <- read_csv(paste0("XGB_importance_c_", drug, ".csv"))
+  importance_summary_list[[drug]] <- imp_df
+}
+
+
+for(drug_name in drug_names){
+  cat("Plotting RFE for:", drug_name, "\n")
+  feature_order <- switch(drug_name,
+                          "ACEi" = gain_ACEi,
+                          "beta" = gain_beta,
+                          "CCB" = gain_CCB,
+                          "diuretic" = gain_diuretic)
+  
+  
+  tmp_gain <- importance_summary_list[[drug_name]]$Gain
+  names(tmp_gain) <- importance_summary_list[[drug_name]]$Feature
+  barplot_height <- tmp_gain[feature_order]
+  barplot_height <- barplot_height[!is.na(barplot_height)]
+  feature_order <- names(barplot_height) 
+  
+  auc_history <- rfe_results[[drug_name]]$auc_history
+  x_vals <- seq(from = length(barplot_height), to = length(barplot_height) - length(auc_history) + 1, by = -1)
+  
+  pdf(file = paste0("RFE_XGB_", drug_name, ".pdf"), width = 10, height = 8)
+  par(mar = c(10, 4, 4, 4))  
+  bar_positions <- barplot(barplot_height,
+                           col = "steelblue1",
+                           names.arg = NA,
+                           ylim = c(0, max(barplot_height)*1.2),
+                           main = paste("Feature Elimination -", drug_name),
+                           ylab = "Feature Gain")
+  text(x = bar_positions, 
+       y = par("usr")[3] - max(barplot_height)*0.05, 
+       labels = feature_order, 
+       srt = 45,  
+       adj = 1,   # 右对齐
+       xpd = TRUE, 
+       cex = 0.8)
+  
+  top_line <- max(barplot_height)*1.15
+  text(x = bar_positions, 
+       y = rep(top_line, length(bar_positions)), 
+       labels = x_vals,
+       col = "black", 
+       cex = 1)
+  
+  par(new = TRUE)
+  plot(x_vals, auc_history,
+       type = "p", pch = 16, col = "black",
+       axes = FALSE, xlab = "", ylab = "",
+       ylim = c(min(auc_history)*0.95, max(auc_history)*1.05))
+  axis(side = 4, col.axis = "black", cex.axis = 0.8)
+  mtext("RFE AUROC", side = 4, line = 2.5, col = "black")
+  
+  suggestion_strictness <- 0.05
+  if(!is.null(suggestion_strictness)){
+    tmp.median.AUROCs <- auc_history
+    for(i in suggestion_strictness){
+      AUC_cutoff <- ((1 - i) * (max(tmp.median.AUROCs) - min(tmp.median.AUROCs))) + min(tmp.median.AUROCs)
+      feature_cutoff <- max(which(tmp.median.AUROCs >= AUC_cutoff)) + 0.5
+      
+      abline(v = feature_cutoff, col = "red", lty = 2)
+      tmp.cutoff.msg <- paste("Strictness:", round(i, 2))
+      
+      tmp.strictness.bg <- paste(rep("-", nchar(tmp.cutoff.msg) - 2), collapse = "")
+      mtext(text = tmp.strictness.bg,
+            side = 3,
+            at = feature_cutoff,
+            line = -12,
+            cex = 0.8,
+            col = "white",
+            padj = 0.56,
+            las = 2,
+            family = "mono",
+            font = 2)
+      mtext(text = tmp.cutoff.msg,
+            side = 3,
+            at = feature_cutoff,
+            line = -12,
+            cex = 0.8,
+            col = "red",
+            las = 2,
+            family = "mono",
+            font = 2)
+    }
+  }
+  dev.off()
+}
+
+
+# SIVS (LASSO+glmnet) ----
 # 依赖交叉验证的嵌入式特征选择
 library(sivs)
 library(varhandle)
 library(glmnet)
 library(foreach)
 library(doParallel)
-# df_sub <- data_list_imp$diuretic[, c("sbp_control_bad", predictors)]
-# DATA <- data.matrix(~ . - 1, data = df_sub[, predictors])
-# RESP <- as.factor(df_sub$sbp_control_bad)
-# sivs_object <- sivs(x = DATA, y = RESP,
-#                     iter.count = 20,
-#                     nfolds = 10,
-#                     parallel.cores ='grace')
-# sivs_object$selection.freq
-
-## 预处理-归一化 
 normalize_data <- function(df, predictors){
   df_num <- df[, predictors]
   
@@ -398,325 +853,331 @@ normalize_data <- function(df, predictors){
   return(df_num)
 }
 
-## VIMP
-calculate_vimp <- function(coef.df){
-  # I(ci)：符号一致性
-  tmp.I <- apply(coef.df, 1, function(r){
-    r <- r[r != 0]
-    if(length(r) == 0) return(0)
-    if(all(r > 0) | all(r < 0)) return(1)
-    return(0)
-  })
+run_sivs_for_all <- function(data_list, predictors, iter.count = 100, nfolds = 10){
+  results <- list()
   
-  # mabs(ci)：非零系数绝对中位数
-  tmp.mabs <- apply(coef.df, 1, function(r){
-    r <- r[r != 0]
-    if(length(r) == 0) return(0)
-    return(abs(median(r)))
-  })
-  
-  # |ci|：非零系数绝对均值
-  tmp.abs <- apply(coef.df, 1, function(r){
-    r <- r[r != 0]
-    if(length(r) == 0) return(0)
-    return(mean(abs(r)))
-  })
-  
-  # IQR(ci)：四分位差
-  tmp.iqr <- apply(coef.df, 1, function(r){
-    r <- r[r != 0]
-    if(length(r) == 0) return(0)
-    return(IQR(r))
-  })
-  
-  # VIMP 公式
-  tmp.vimp <- (tmp.I * tmp.mabs * tmp.abs) / (1 + tmp.iqr)
-  tmp.vimp[is.nan(tmp.vimp)] <- 0
-  
-  # 排序
-  tmp.vimp <- sort(tmp.vimp, decreasing = TRUE)
-  tmp.vimp <- tmp.vimp[!is.element(names(tmp.vimp), "(Intercept)")]
-  
-  return(tmp.vimp)
-}
-
-## Elastic Net + glmnet 
-run_iterative_lasso <- function(df_sub, response_name, predictors,
-                                iter.count = 100, test.ratio = 1/3, nfolds = 10,
-                                ncores = 11, pdf_filename = NULL, main_title = NULL){
-  
-  RESP <- as.factor(df_sub[[response_name]])
-  DATA <- as.matrix(normalize_data(df_sub, predictors))
-  features <- colnames(DATA)
-  feature_selected_count <- setNames(rep(0, length(features)), features)
-  
-  cl <- makeCluster(ncores)
-  registerDoParallel(cl)
-  
-  iterative_res <- foreach(i = 1:iter.count, .packages = "glmnet") %dopar% {
-    train_idx <- sample(1:nrow(DATA), size = floor((1 - test.ratio) * nrow(DATA)))
-    x_train <- DATA[train_idx, ]
-    y_train <- RESP[train_idx]
+  for(drug in names(data_list)){
+    cat("Running SIVS for:", drug, "\n")
     
-    cv_fit <- tryCatch({
-      cv.glmnet(x=x_train, y=y_train, family="binomial", nfolds=nfolds,alpha=0.2)
-    }, error=function(e) NULL)
+    df_sub <- data_list[[drug]][, c("sbp_control_bad", predictors)]
+    RESP <- as.factor(df_sub[["sbp_control_bad"]])
+    DATA <- as.matrix(normalize_data(df_sub, predictors))
     
-    if(!is.null(cv_fit)){
-      coef_vec <- coef(cv_fit, s="lambda.min")
-      data.frame(names=rownames(coef_vec), coef=coef_vec[,1], stringsAsFactors=FALSE)
-    } else {
-      NULL
-    }
-  }
-  
-  stopCluster(cl)  
-  
-  ## 结果
-  clean_iter <- iterative_res[!sapply(iterative_res, is.null)]
-  coef.df <- Reduce(function(...){ merge(..., by="names", all=TRUE) },
-                    lapply(seq_along(clean_iter), function(i){
-                      temp <- clean_iter[[i]]
-                      colnames(temp)[2] <- paste0("coef.iter", i)
-                      temp
-                    }))
-  rownames(coef.df) <- coef.df$names
-  coef.df <- coef.df[, -match("names", colnames(coef.df))]
-  
-  ### 选中次数
-  for(i in seq_along(clean_iter)){
-    coef_vec <- clean_iter[[i]]
-    selected <- coef_vec$names[coef_vec$coef != 0]
-    selected <- setdiff(selected, "(Intercept)")
-    feature_selected_count[selected] <- feature_selected_count[selected] + 1
-  }
-  
-  ### VIMP
-  vimp_res <- calculate_vimp(coef.df)
-  
-  ### 图
-  if(!is.null(pdf_filename)){
-    pdf(pdf_filename, width=16, height=10)
-    par(mfrow=c(1,2))
+    sivs_obj <- sivs(x = DATA, y = RESP,
+                     iter.count = iter.count,
+                     nfolds = nfolds,
+                     parallel.cores = "grace")
     
-    # 1. 系数
-    coef_df_plot <- coef.df[apply(coef.df,1,function(x) any(x!=0)), ]
-    coef_df_plot <- t(coef_df_plot)
-    coef_df_plot <- coef_df_plot[, order(apply(coef_df_plot,2,median), decreasing=TRUE)]
-    if(is.null(main_title)) main_title <- "Iterative LASSO Coefficients"
-    boxplot(coef_df_plot, col="darkolivegreen3",
-            main=paste(main_title,"- Coefficients"),
-            ylab="Coefficient", las=2, cex.axis=0.7)
-    abline(h=0,col="gray",lty=2)
+    suggested <- sivs::suggest(sivs_obj)
+    results[[drug]] <- list(
+      sivs_vimp = sivs_obj$vimp,
+      suggested_features = suggested
+    )
     
-    # 2. VIMP
-    barplot(vimp_res, col="skyblue", las=2,
-            main=paste(main_title,"- VIMP"), ylab="VIMP")
-    
-    par(mfrow=c(1,1))
+    pdf(paste0("SIVS_plot_", drug, ".pdf"), width = 8, height = 6)
+    layout(mat = matrix(c(1,2,
+                          3,3),
+                        nrow = 2, byrow = TRUE))
+    plot(sivs_obj)
+    layout(1)
     dev.off()
   }
   
-  return(list(
-    iterative_res = iterative_res,
-    coef.df = coef.df,
-    selection_count = feature_selected_count,
-    vimp = vimp_res
-  ))
+  return(results)
 }
 
+sivs_results_all <- run_sivs_for_all(data_list_imp, predictors)
 
-predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
-                "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
-                "dbp_arv","sbp_arv",
-                "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi",
-                "ua","dyslipidemia","drug_time")
-
-sivs_results <- list()
-for(df_name in names(data_list_imp)){
-  df <- data_list_imp[[df_name]]
-  df_sub <- df[, c("sbp_control_bad", predictors)]
+merge_sivs_results <- function(sivs_results_all){
+  merged_list <- list()
   
-  pdf_filename <- paste0("SIVS_", df_name, ".pdf")
-  sivs_results[[df_name]] <- run_iterative_lasso(
-    df_sub=df_sub,
-    response_name="sbp_control_bad",
-    predictors=predictors,
-    main_title=df_name,
-    pdf_filename=pdf_filename
-  )
+  for(drug in names(sivs_results_all)){
+    vimp <- sivs_results_all[[drug]]$sivs_vimp
+    suggested <- sivs_results_all[[drug]]$suggested_features
+    
+    if(is.vector(vimp)) {
+      df_vimp <- data.frame(Feature = names(vimp),
+                            VIMP = as.numeric(vimp))
+    } else {
+      df_vimp <- vimp
+      if(!all(c("Feature","VIMP") %in% colnames(df_vimp))){
+        df_vimp <- data.frame(Feature = rownames(df_vimp),
+                              VIMP = df_vimp[,1])
+      }
+    }
+    
+    df_vimp$Suggested <- ifelse(df_vimp$Feature %in% suggested, TRUE, FALSE)
+    df_vimp$Drug <- drug
+    
+    merged_list[[drug]] <- df_vimp
+  }
   
-  vimp_df <- data.frame(
-    Feature = names(sivs_results[[df_name]]$vimp),
-    VIMP = as.numeric(sivs_results[[df_name]]$vimp),
-    Selection_Count = sivs_results[[df_name]]$selection_count[names(sivs_results[[df_name]]$vimp)]
-  )
-  write.csv(vimp_df, paste0("VIMP_", df_name, ".csv"), row.names=FALSE)
+  merged_df <- do.call(rbind, merged_list)
+  rownames(merged_df) <- NULL
+  merged_df <- merged_df %>% arrange(Drug, desc(VIMP))
+  return(merged_df)
 }
 
+sivs_summary_df <- merge_sivs_results(sivs_results_all)
+write.csv(sivs_summary_df,"sivs.csv")
 
 
-# XGBoost - gbtree ----
-library(xgboost)
-library(dplyr)
-
-predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
-                "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
-                "dbp_arv","sbp_arv",
-                "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi",
-                "ua","dyslipidemia","drug_time")
-
-xgb_params <- list(
-  booster = "gbtree",
-  eta = 0.05,
-  max_depth = 4,
-  gamma = 4,
-  subsample = 0.75,
-  colsample_bytree = 0.75,
-  objective = "binary:logistic",
-  eval_metric = "logloss"
-)
-
-# 循环data_list_imp
-for(name in names(data_list_imp)){
-  df <- data_list_imp[[name]]
-  y_train <- df$sbp_control_bad
-  X_train <- df %>% select(all_of(predictors))
-  # one-hot 编码
-  X_train_mat <- model.matrix(~ . -1, data = X_train)
-  
-  xgb_train <- xgb.DMatrix(data = X_train_mat, label = y_train)
-  xgb_model <- xgb.train(
-    params = xgb_params,
-    data = xgb_train,
-    nrounds = 1000,
-    verbose = 0
-  )
-  
-  # 特征重要性
-  importance_matrix <- xgb.importance(feature_names = colnames(X_train_mat), model = xgb_model)
-  importance_matrix$OriginalFeature <- sapply(importance_matrix$Feature, function(x) {
-    matched <- predictors[sapply(predictors, function(p) grepl(p, x))]
-    if(length(matched) > 0) matched[1] else x
-  })
-  
-  importance_summary <- importance_matrix %>%
-    group_by(OriginalFeature) %>%
-    summarise(TotalGain = sum(Gain)) %>%
-    arrange(desc(TotalGain))
-  
-  write.csv(importance_summary, file = paste0("XGB_importance_", name, ".csv"), row.names = FALSE)
-  
-  pdf(file = paste0("XGB_importance_", name, ".pdf"), width = 10, height = 8)
-  importance_plot <- importance_matrix[order(-importance_matrix$Gain), ]
-  xgb.plot.importance(importance_plot, rel_to_first = TRUE, xlab = "Relative Gain",
-                      main = paste("XGBoost Feature Importance -", name))
-  dev.off()
-}
-
-
-
-
-
-
-
-
-
-
-
-
-# RFE - RF+XBG+glm ----
-library(plyr)
-library(caret)
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+## 预处理-归一化 
+# normalize_data <- function(df, predictors){
+#   df_num <- df[, predictors]
+#   
+#   for(col in colnames(df_num)){
+#     if(is.factor(df_num[[col]]) | is.character(df_num[[col]])){
+#       df_num[[col]] <- as.numeric(as.factor(df_num[[col]]))
+#     }
+#     rng <- range(df_num[[col]], na.rm = TRUE)
+#     if(diff(rng) > 0){
+#       df_num[[col]] <- (df_num[[col]] - rng[1]) / diff(rng)
+#     } else {
+#       df_num[[col]] <- 0  
+#     }
+#   }
+#   
+#   return(df_num)
+# }
+# 
+# ## VIMP
+# calculate_vimp <- function(coef.df){
+#   # I(ci)：符号一致性
+#   tmp.I <- apply(coef.df, 1, function(r){
+#     r <- r[r != 0]
+#     if(length(r) == 0) return(0)
+#     if(all(r > 0) | all(r < 0)) return(1)
+#     return(0)
+#   })
+#   
+#   # mabs(ci)：非零系数绝对中位数
+#   tmp.mabs <- apply(coef.df, 1, function(r){
+#     r <- r[r != 0]
+#     if(length(r) == 0) return(0)
+#     return(abs(median(r)))
+#   })
+#   
+#   # |ci|：非零系数绝对均值
+#   tmp.abs <- apply(coef.df, 1, function(r){
+#     r <- r[r != 0]
+#     if(length(r) == 0) return(0)
+#     return(mean(abs(r)))
+#   })
+#   
+#   # IQR(ci)：四分位差
+#   tmp.iqr <- apply(coef.df, 1, function(r){
+#     r <- r[r != 0]
+#     if(length(r) == 0) return(0)
+#     return(IQR(r))
+#   })
+#   
+#   # VIMP 公式
+#   tmp.vimp <- (tmp.I * tmp.mabs * tmp.abs) / (1 + tmp.iqr)
+#   tmp.vimp[is.nan(tmp.vimp)] <- 0
+#   
+#   # 排序
+#   tmp.vimp <- sort(tmp.vimp, decreasing = TRUE)
+#   tmp.vimp <- tmp.vimp[!is.element(names(tmp.vimp), "(Intercept)")]
+#   
+#   return(tmp.vimp)
+# }
+# 
+# ## LASSO + glmnet 
+# run_iterative_LASSO <- function(df_sub, response_name, predictors,
+#                                 iter.count = 100, test.ratio = 1/3, nfolds = 10,
+#                                 ncores = 11, pdf_filename = NULL, main_title = NULL){
+#   
+#   RESP <- as.factor(df_sub[[response_name]])
+#   DATA <- as.matrix(normalize_data(df_sub, predictors))
+#   features <- colnames(DATA)
+#   feature_selected_count <- setNames(rep(0, length(features)), features)
+#   
+#   cl <- makeCluster(ncores)
+#   registerDoParallel(cl)
+#   
+#   iterative_res <- foreach(i = 1:iter.count, .packages = "glmnet") %dopar% {
+#     train_idx <- sample(1:nrow(DATA), size = floor((1 - test.ratio) * nrow(DATA)))
+#     x_train <- DATA[train_idx, ]
+#     y_train <- RESP[train_idx]
+#     
+#     cv_fit <- tryCatch({
+#       cv.glmnet(x=x_train, y=y_train, family="binomial", nfolds=nfolds,alpha=1)
+#     }, error=function(e) NULL)
+#     
+#     if(!is.null(cv_fit)){
+#       coef_vec <- coef(cv_fit, s="lambda.min")
+#       data.frame(names=rownames(coef_vec), coef=coef_vec[,1], stringsAsFactors=FALSE)
+#     } else {
+#       NULL
+#     }
+#   }
+#   
+#   stopCluster(cl)  
+#   
+#   ## 结果
+#   clean_iter <- iterative_res[!sapply(iterative_res, is.null)]
+#   coef.df <- Reduce(function(...){ merge(..., by="names", all=TRUE) },
+#                     lapply(seq_along(clean_iter), function(i){
+#                       temp <- clean_iter[[i]]
+#                       colnames(temp)[2] <- paste0("coef.iter", i)
+#                       temp
+#                     }))
+#   rownames(coef.df) <- coef.df$names
+#   coef.df <- coef.df[, -match("names", colnames(coef.df))]
+#   
+#   ### 选中次数
+#   for(i in seq_along(clean_iter)){
+#     coef_vec <- clean_iter[[i]]
+#     selected <- coef_vec$names[coef_vec$coef != 0]
+#     selected <- setdiff(selected, "(Intercept)")
+#     feature_selected_count[selected] <- feature_selected_count[selected] + 1
+#   }
+#   
+#   ### VIMP
+#   vimp_res <- calculate_vimp(coef.df)
+#   
+#   ### 图
+#   if(!is.null(pdf_filename)){
+#     pdf(pdf_filename, width=16, height=10)
+#     par(mfrow=c(1,2))
+#     
+#     # 1. 系数
+#     coef_df_plot <- coef.df[apply(coef.df,1,function(x) any(x!=0)), ]
+#     coef_df_plot <- t(coef_df_plot)
+#     coef_df_plot <- coef_df_plot[, order(apply(coef_df_plot,2,median), decreasing=TRUE)]
+#     if(is.null(main_title)) main_title <- "Iterative LASSO Coefficients"
+#     boxplot(coef_df_plot, col="darkolivegreen3",
+#             main=paste(main_title,"- Coefficients"),
+#             ylab="Coefficient", las=2, cex.axis=0.7)
+#     abline(h=0,col="gray",lty=2)
+#     
+#     # 2. VIMP
+#     barplot(vimp_res, col="skyblue", las=2,
+#             main=paste(main_title,"- VIMP"), ylab="VIMP")
+#     
+#     par(mfrow=c(1,1))
+#     dev.off()
+#   }
+#   
+#   return(list(
+#     iterative_res = iterative_res,
+#     coef.df = coef.df,
+#     selection_count = feature_selected_count,
+#     vimp = vimp_res
+#   ))
+# }
+# 
+# 
+# predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
+#                 "smk","sport","dNa","mental","Fhis_hype","hype_duration_5",
+#                 "dbp_arv","sbp_arv",
+#                 "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi",
+#                 "ua","dyslipidemia","drug_time")
+# 
+# sivs_results <- list()
+# for(df_name in names(data_list_imp)){
+#   df <- data_list_imp[[df_name]]
+#   df_sub <- df[, c("sbp_control_bad", predictors)]
+#   
+#   pdf_filename <- paste0("SIVS_", df_name, ".pdf")
+#   sivs_results[[df_name]] <- run_iterative_LASSO(
+#     df_sub=df_sub,
+#     response_name="sbp_control_bad",
+#     predictors=predictors,
+#     main_title=df_name,
+#     pdf_filename=pdf_filename
+#   )
+#   
+#   vimp_df <- data.frame(
+#     Feature = names(sivs_results[[df_name]]$vimp),
+#     VIMP = as.numeric(sivs_results[[df_name]]$vimp),
+#     Selection_Count = sivs_results[[df_name]]$selection_count[names(sivs_results[[df_name]]$vimp)]
+#   )
+#   write.csv(vimp_df, paste0("VIMP_", df_name, ".csv"), row.names=FALSE)
+# }
 
 ## importance 排序 ----
 load("boruta.Rdata")
-str(boruta_results$ACEi)
-VIMP_ACEi_sivs <- read_csv("VIMP_ACEi.csv")
-VIMP_beta_sivs <- read_csv("VIMP_beta.csv")
-VIMP_CCB_sivs <- read_csv("VIMP_CCB.csv")
-VIMP_diuretic_sivs <- read_csv("VIMP_diuretic.csv")
-str(VIMP_ACEi_sivs)
 XGB_importance_CCB <- read_csv("XGB_importance_CCB.csv")
 XGB_importance_ACEi <- read_csv("XGB_importance_ACEi.csv")
 XGB_importance_beta <- read_csv("XGB_importance_beta.csv")
 XGB_importance_diuretic <- read_csv("XGB_importance_diuretic.csv")
+# LGB_importance_ACEi <- read_csv("LGB_importance_ACEi.csv")
+# LGB_importance_CCB <- read_csv("LGB_importance_CCB.csv")
+# LGB_importance_beta <- read_csv("LGB_importance_beta.csv")
+# LGB_importance_diuretic <- read_csv("LGB_importance_diuretic.csv")
+logi_ACEi <- read_csv("logi_ACEi.csv")
+logi_CCB <- read_csv("logi_CCB.csv")
+logi_diuretic <- read_csv("logi_diuretic.csv")
+logi_beta <- read_csv("logi_beta.csv")
+str(boruta_results$ACEi)
 str(XGB_importance_ACEi)
+# str(LGB_importance_ACEi)
+str(logi_ACEi)
 
-merge_three_importance <- function(boruta_df, vimp_df, xgb_df) {
+
+merge_four_importance <- function(boruta_df, logi_df, xgb_df) {
   
-  boruta_clean <- boruta_df %>%
-    dplyr::select(Variable, importance) %>%
+  # Boruta
+  boruta_clean <- dplyr::select(boruta_df, Variable, importance) %>%
     dplyr::rename(Feature = Variable, Boruta_importance = importance)
   
-  vimp_clean <- vimp_df %>%
-    dplyr::select(Feature, LASSO_VIMP = VIMP)
+  # 逻辑回归
+  logi_clean <- dplyr::select(logi_df, var_base, TotalImportance) %>%
+    dplyr::rename(Feature = var_base, Logi_importance = TotalImportance)
   
-  xgb_clean <- xgb_df %>%
-    dplyr::rename(Feature = OriginalFeature, XGB_TotalGain = TotalGain) %>%
-    dplyr::select(Feature, XGB_TotalGain)
+  # XGBoost
+  xgb_clean <- dplyr::select(xgb_df, OriginalFeature, TotalGain) %>%
+    dplyr::rename(Feature = OriginalFeature, XGB_importance = TotalGain)
   
+  # # LightGBM
+  # lgb_clean <- dplyr::select(lgb_df, OriginalFeature, TotalGain) %>%
+  #   dplyr::rename(Feature = OriginalFeature, LGB_importance = TotalGain)
+  
+  # 合并
   merged <- boruta_clean %>%
-    full_join(vimp_clean, by = "Feature") %>%
-    full_join(xgb_clean, by = "Feature")
+    dplyr::full_join(logi_clean, by = "Feature") %>%
+    dplyr::full_join(xgb_clean, by = "Feature") 
+  # %>% dplyr::full_join(lgb_clean, by = "Feature")
   
   return(merged)
 }
 
+
 merged_all_list <- list(
-  ACEi     = merge_three_importance(boruta_results$ACEi, VIMP_ACEi_sivs, XGB_importance_ACEi),
-  beta     = merge_three_importance(boruta_results$beta, VIMP_beta_sivs, XGB_importance_beta),
-  CCB      = merge_three_importance(boruta_results$CCB, VIMP_CCB_sivs, XGB_importance_CCB),
-  diuretic = merge_three_importance(boruta_results$diuretic, VIMP_diuretic_sivs, XGB_importance_diuretic)
+  ACEi     = merge_four_importance(boruta_results$ACEi, logi_ACEi, XGB_importance_ACEi),
+  beta     = merge_four_importance(boruta_results$beta, logi_beta, XGB_importance_beta),
+  CCB      = merge_four_importance(boruta_results$CCB, logi_CCB, XGB_importance_CCB),
+  diuretic = merge_four_importance(boruta_results$diuretic, logi_diuretic, XGB_importance_diuretic)
 )
 
-merged_all <- bind_rows(
+merged_all <- dplyr::bind_rows(
   lapply(names(merged_all_list), function(drug) {
-    merged_all_list[[drug]] %>% mutate(Drug = drug)
+    merged_all_list[[drug]] %>% dplyr::mutate(Drug = drug)
   })
-)
-
-merged_all$XGB_TotalGain[is.na(merged_all$XGB_TotalGain)] <- 0
-
-merged_all <- merged_all %>%
-  mutate(
-    Boruta_norm = (Boruta_importance - min(Boruta_importance, na.rm = TRUE)) /
-      (max(Boruta_importance, na.rm = TRUE) - min(Boruta_importance, na.rm = TRUE)),
-    LASSO_norm  = (LASSO_VIMP - min(LASSO_VIMP, na.rm = TRUE)) /
-      (max(LASSO_VIMP, na.rm = TRUE) - min(LASSO_VIMP, na.rm = TRUE)),
-    XGB_norm    = (XGB_TotalGain - min(XGB_TotalGain, na.rm = TRUE)) /
-      (max(XGB_TotalGain, na.rm = TRUE) - min(XGB_TotalGain, na.rm = TRUE)),
-    Comprehensive_Importance = Boruta_norm + LASSO_norm + XGB_norm
-  )
+)%>%
+  mutate(across(where(is.numeric), ~ tidyr::replace_na(.x, 0)))
 
 write.csv(merged_all,"importance_total.csv")
 
 
+
 merged_long <- merged_all %>%
   pivot_longer(
-    cols = c(Boruta_importance, LASSO_VIMP, XGB_TotalGain),
+    cols = c(Boruta_importance, Logi_importance , XGB_importance),
     names_to = "Importance_Type",
     values_to = "Importance"
-  ) %>%
-  mutate(Importance = tidyr::replace_na(Importance, 0))
+  ) 
 
-# 对 LASSO_VIMP 取 log1p(sqrt
 merged_long <- merged_long %>%
-  mutate(
-    Importance_trans = if_else(Importance_Type == "LASSO_VIMP",
-                               log1p(sqrt(pmax(Importance, 0))), Importance)
-  ) %>%
   group_by(Drug, Importance_Type) %>%
   mutate(
-    minv = min(Importance_trans, na.rm = TRUE),
-    maxv = max(Importance_trans, na.rm = TRUE),
+    minv = min(Importance, na.rm = TRUE),
+    maxv = max(Importance, na.rm = TRUE),
     Importance_norm = if_else(
       maxv > minv,
-      (Importance_trans - minv) / (maxv - minv),
+      (Importance - minv) / (maxv - minv),
       0
     )
   ) %>%
@@ -749,47 +1210,3 @@ ggplot(merged_long, aes(x = Importance_Type, y = Feature, fill = Importance_norm
   )
 
 ggsave("feature_importance_heatmap.pdf", width = 12, height = 8)
-
-
-## RFE ----
-library(pROC)
-library(xgboost)
-load("data_list_imp.Rdata")
-data_list_imp <- lapply(data_list_imp, function(df) {
-  ttr_cut <- quantile(df$sbpTTR1, probs = 1/3, na.rm = TRUE)   
-  load_cut <- quantile(df$SBPload1, probs = 2/3, na.rm = TRUE) 
-  
-  df <- df %>%
-    mutate(sbp_control_bad =case_when(
-      sbpTTR1 <= ttr_cut & SBPload1 >= load_cut & meanSBP >= 130 ~ 1,  
-      TRUE ~ 0
-    ))
-  return(df)
-})
-data_list_imp <- lapply(data_list_imp, function(df) {
-  df$mental <- factor(df$mental,
-                      levels = c("Good Mental Health", "Anxiety or Depression"))
-  df$DM <- factor(df$DM,
-                  levels = c("no","preDM","DM"))
-  return(df)
-})
-importance_total <- read.csv("importance_total.csv", stringsAsFactors = FALSE)
-
-predictors <- c("sex","age","ethnicity","work","marriage","education","alco",
-                "smk","sport","still","dNa","mental","Fhis_hype","hype_duration_5",
-                "bmi","HR","AF","cvd","hf","stroke_w_o_TIA","DM","ckdepi","CKD_risk","ua","dyslipidemia")
-
-response <- "sbp_control_bad"
-
-
-
-
-
-
-
-
-
-
-
-
-
